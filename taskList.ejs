@@ -1,0 +1,19 @@
+<%- include("navbar",{user:user}) %>
+
+<h2>Tasks</h2>
+
+<a href="/add-task">Add Task</a>
+
+<ul>
+<% tasks.forEach(task=>{ %>
+<li>
+<%= task.title %> - <%= task.desc %>
+
+<% if(task.user && task.user.username){ %>
+(By <%= task.user.username %>)
+<% } %>
+
+<a href="/delete/<%= task._id %>">Delete</a>
+</li>
+<% }) %>
+</ul>
