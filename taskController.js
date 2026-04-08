@@ -1,29 +1,33 @@
+import Task from "../models/Task.js";
 
-const Task = require("../models/Task");
-
-exports.getTasks = async (req,res)=>{
-    let tasks;
-
-    if(req.user.role === "admin"){
-        tasks = await Task.find().populate("user");
-    } else {
-        tasks = await Task.find({user:req.user.id});
-    }
-
-    res.render("taskList", {tasks, user:req.user});
+// CREATE TASK
+export const createTask = async (req, res) => {
+  try {
+    const task = await Task.create(req.body);
+    res.status(201).json(task);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
-exports.addTask = async (req,res)=>{
-    await Task.create({
-        title:req.body.title,
-        desc:req.body.desc,
-        user:req.user.id
-    });
-
-    res.redirect("/tasks");
+// GET ALL TASKS
+export const getTasks = async (req, res) => {
+  const tasks = await Task.find();
+  res.json(tasks);
 };
 
-exports.deleteTask = async (req,res)=>{
-    await Task.findByIdAndDelete(req.params.id);
-    res.redirect("/tasks");
+// UPDATE TASK
+export const updateTask = async (req, res) => {
+  const task = await Task.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+  res.json(task);
+};
+
+// DELETE TASK
+export const deleteTask = async (req, res) => {
+  await Task.findByIdAndDelete(req.params.id);
+  res.json({ message: "Task deleted" });
 };
