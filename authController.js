@@ -1,44 +1,39 @@
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const User = require("../models/User")
 
-exports.registerPage = (req,res)=>{
-    res.render("register");
-};
+// REGISTER
+exports.registerUser = async (req, res) => {
 
-exports.loginPage = (req,res)=>{
-    res.render("login");
-};
+    try {
 
-exports.register = async (req,res)=>{
-    const {username,password} = req.body;
+        res.json({
+            success: true,
+            message: "Register API Working"
+        })
 
-    const hash = await bcrypt.hash(password,10);
+    } catch (error) {
 
-    await User.create({username,password:hash});
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
 
-    res.redirect("/login");
-};
+// LOGIN
+exports.loginUser = async (req, res) => {
 
-exports.login = async (req,res)=>{
-    const user = await User.findOne({username:req.body.username});
+    try {
 
-    if(!user) return res.send("User not found");
+        res.json({
+            success: true,
+            message: "Login API Working"
+        })
 
-    const match = await bcrypt.compare(req.body.password,user.password);
+    } catch (error) {
 
-    if(!match) return res.send("Wrong password");
-
-    const token = jwt.sign(
-        {id:user._id, role:user.role},
-        "secretkey"
-    );
-
-    res.cookie("token",token);
-    res.redirect("/tasks");
-};
-
-exports.logout = (req,res)=>{
-    res.clearCookie("token");
-    res.redirect("/login");
-};
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
